@@ -8,10 +8,11 @@ import (
 )
 
 type Direction string
+
 const (
-	Down Direction = "down"
-	Up 			= "up"
-	Forward		= "forward"
+	Down    Direction = "down"
+	Up                = "up"
+	Forward           = "forward"
 )
 
 type Vector struct {
@@ -19,8 +20,7 @@ type Vector struct {
 	magnitude int
 }
 
-
-func readLines(path string) ([]Vector, error)  {
+func readLines(path string) ([]Vector, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -41,11 +41,9 @@ func readLines(path string) ([]Vector, error)  {
 }
 
 func computeTotalDistances(vectors []Vector) (int, int) {
-	var i int
 	var totalVerticalDistance int
 	var totalHorizontalDistance int
-	for i = 0; i < len(vectors); i++ {
-		var vector = vectors[i]
+	for _, vector := range vectors {
 		if vector.direction == Up {
 			totalVerticalDistance -= vector.magnitude
 		}
@@ -60,12 +58,10 @@ func computeTotalDistances(vectors []Vector) (int, int) {
 }
 
 func computeTotalDistancesNewMethod(vectors []Vector) (int, int) {
-	var i int
 	var aim int
 	var totalHorizontalDistance int
 	var totalVerticalDistance int
-	for i = 0; i < len(vectors); i++ {
-		var vector = vectors[i]
+	for _, vector := range vectors {
 		if vector.direction == Up {
 			aim -= vector.magnitude
 		}

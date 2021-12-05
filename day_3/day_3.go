@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func readLines(path string) ([] string, error) {
+func readLines(path string) ([]string, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -26,25 +26,22 @@ func determineMostCommonBitPerColumn(rowsOfBits []string) string {
 	return constructBitString(sumPerColumn, rowsOfBits)
 }
 
-
-func computeSumByColumn(rowsOfBits [] string) [] int {
-	var i, j int
-	var sumPerColumn = make([] int, len(rowsOfBits[0]))
-	for i = 0; i < len(rowsOfBits); i++ {
-		bitString := rowsOfBits[i]
-		for j = 0; j < len(bitString); j++ {
-			bit, _ := strconv.Atoi(string(bitString[j]))
+func computeSumByColumn(rowsOfBits []string) []int {
+	var j int
+	var sumPerColumn = make([]int, len(rowsOfBits[0]))
+	for _, bitString := range rowsOfBits {
+		for _, bitChar := range bitString {
+			bit, _ := strconv.Atoi(string(bitChar))
 			sumPerColumn[j] += bit
 		}
 	}
 	return sumPerColumn
 }
 
-func constructBitString(sumPerColumn [] int, rowsOfBits [] string) string {
-	var i int
+func constructBitString(sumPerColumn []int, rowsOfBits []string) string {
 	var result string
-	for i = 0; i < len(sumPerColumn); i++ {
-		if sumPerColumn[i] >= len(rowsOfBits) / 2 {
+	for _, sum := range sumPerColumn {
+		if sum >= len(rowsOfBits)/2 {
 			result += "1"
 		} else {
 			result += "0"
@@ -54,10 +51,9 @@ func constructBitString(sumPerColumn [] int, rowsOfBits [] string) string {
 }
 
 func flipBits(bitString string) string {
-	var i int
 	var invertedBitString = ""
-	for i = 0; i < len(bitString); i++ {
-		if string(bitString[i]) == "1" {
+	for bit := range bitString {
+		if string(rune(bit)) == "1" {
 			invertedBitString += "0"
 		} else {
 			invertedBitString += "1"
@@ -66,7 +62,7 @@ func flipBits(bitString string) string {
 	return invertedBitString
 }
 
-func computeDiagnostics(bits [] string, compareFunction func(x int, y int) bool) [] string {
+func computeDiagnostics(bits []string, compareFunction func(x int, y int) bool) []string {
 	var i int
 	for i = 0; i < len(bits[0]); i++ {
 		var sumForColumn = 0
@@ -76,7 +72,7 @@ func computeDiagnostics(bits [] string, compareFunction func(x int, y int) bool)
 			sumForColumn += bit
 		}
 		var filterFunction func(s string) bool
-		var majorityOfRows = int(math.Ceil(float64(len(bits))/2.0))
+		var majorityOfRows = int(math.Ceil(float64(len(bits)) / 2.0))
 		if compareFunction(sumForColumn, majorityOfRows) {
 			filterFunction = func(s string) bool {
 				return string(s[i]) == "1"
@@ -104,7 +100,7 @@ func filter(ss []string, test func(string) bool) (ret []string) {
 }
 
 func main() {
-	dat, _ := readLines("day_3/day_3.txt")
+	dat, _ := readLines("day_3/day_3_test.txt")
 	mostCommonBitsPerColumn := determineMostCommonBitPerColumn(dat)
 	leastCommonBitsPerColumn := flipBits(mostCommonBitsPerColumn)
 	epsilonRate, _ := strconv.ParseInt(mostCommonBitsPerColumn, 2, 64)
@@ -114,9 +110,9 @@ func main() {
 	println(epsilonRate)
 	println(gammaRate)
 	println(epsilonRate * gammaRate)
-	var oxygenDiagnosticCompare = func(x int, y int) bool {return x >= y}
-	var co2ScrubberCompare = func(x int, y int) bool {return x < y}
-	oxygenDiagnostic:= computeDiagnostics(dat, oxygenDiagnosticCompare)[0]
+	var oxygenDiagnosticCompare = func(x int, y int) bool { return x >= y }
+	var co2ScrubberCompare = func(x int, y int) bool { return x < y }
+	oxygenDiagnostic := computeDiagnostics(dat, oxygenDiagnosticCompare)[0]
 	co2ScrubberRating := computeDiagnostics(dat, co2ScrubberCompare)[0]
 	foo, _ := strconv.ParseInt(oxygenDiagnostic, 2, 64)
 	bar, _ := strconv.ParseInt(co2ScrubberRating, 2, 64)
