@@ -27,13 +27,19 @@ func determineMostCommonBitPerColumn(rowsOfBits []string) string {
 }
 
 func computeSumByColumn(rowsOfBits []string) []int {
-	var j int
 	var sumPerColumn = make([]int, len(rowsOfBits[0]))
+	sem := make(chan int, len(rowsOfBits))
 	for _, bitString := range rowsOfBits {
-		for _, bitChar := range bitString {
-			bit, _ := strconv.Atoi(string(bitChar))
-			sumPerColumn[j] += bit
-		}
+		go func(bitString string) {
+			for j, bitChar := range bitString {
+				bit, _ := strconv.Atoi(string(bitChar))
+				sumPerColumn[j] += bit
+			}
+			sem <- 1
+		}(bitString)
+	}
+	for i := 0; i < len(rowsOfBits); i++ {
+		<-sem
 	}
 	return sumPerColumn
 }
