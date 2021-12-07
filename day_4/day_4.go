@@ -109,23 +109,46 @@ func readLines(path string) ([]BingoCard, []int) {
 	return bingoCards, winningNumbers
 }
 
-func playBingo(bingoCards []BingoCard, winningNumbers []int) int {
+func playBingo(bingoCards []BingoCard, winningNumbers []int) (int, int) {
 	for _, winningNumber := range winningNumbers {
 		for _, bingoCard := range bingoCards {
 			result := checkCard(&bingoCard, winningNumber)
 			if result != -1 {
-				return result * winningNumber
+				return result, winningNumber
 			}
+		}
+	}
+	return -1, -1
+}
+
+func indexOf(arr []int, value int) int {
+	for k, v := range arr {
+		if v == value {
+			return k
 		}
 	}
 	return -1
 }
 
+func findLastWinningCard(bingoCards []BingoCard, winningNumbers []int) int {
+	lastIndex := -1
+	lastResult := -1
+	for _, bingoCard := range bingoCards {
+		sumOfUnmarked, winningNumber := playBingo([]BingoCard{bingoCard}, winningNumbers)
+		indexOfWinningNumber := indexOf(winningNumbers, winningNumber)
+		if indexOf(winningNumbers, winningNumber) > lastIndex {
+			lastResult = sumOfUnmarked * winningNumber
+			lastIndex = indexOfWinningNumber
+		}
+	}
+	return lastResult
+}
+
 func main() {
-	bingoCards, winningNumbers := readLines("day_4/day_4_test.txt")
-	println(bingoCards)
-	println(winningNumbers)
-	result := playBingo(bingoCards, winningNumbers)
-	println(result)
+	bingoCards, winningNumbers := readLines("day_4/day_4.txt")
+	sumOfUnmarked, winningNumber := playBingo(bingoCards, winningNumbers)
+	println(sumOfUnmarked * winningNumber)
+	bingoCards, winningNumbers = readLines("day_4/day_4.txt")
+	println(findLastWinningCard(bingoCards, winningNumbers))
 
 }
