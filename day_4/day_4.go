@@ -109,13 +109,12 @@ func readLines(path string) ([]BingoCard, []int) {
 	return bingoCards, winningNumbers
 }
 
-func playBingo(bingoCards []BingoCard,
-	winningNumbers []int) int {
+func playBingo(bingoCards []BingoCard, winningNumbers []int) int {
 	for _, winningNumber := range winningNumbers {
 		for _, bingoCard := range bingoCards {
 			result := checkCard(&bingoCard, winningNumber)
 			if result != -1 {
-				return result
+				return result * winningNumber
 			}
 		}
 	}
