@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -26,23 +28,44 @@ func readLines(path string) []int {
 
 func simulateLanternfishGrowth(
 	lanternFishStartingStates []int,
-	days int) []int {
+	days int) map[int]int {
 	lanternFishStates := lanternFishStartingStates
-	for day := 0; day < days; day++ {
-		for i, lanternFishState := range lanternFishStates {
-			if lanternFishState == 0 {
-				lanternFishStates[i] = 6
-				lanternFishStates = append(lanternFishStates, 8)
-			} else {
-				lanternFishStates[i] = lanternFishState - 1
-			}
-		}
+	foo := make(map[int]int)
+	for i := 0; i <= 8; i++ {
+		foo[i] = 0
 	}
-	return lanternFishStates
+	for _, state := range lanternFishStates {
+		foo[state] += 1
+	}
+	keys := make([]int, 0, len(foo))
+	for k := range foo {
+		keys = append(keys, k)
+	}
+	sort.Ints(keys)
+	for day := 0; day < days; day++ {
+		bar := foo[0]
+		for _, lanternFishState := range keys {
+			count := foo[lanternFishState]
+			if lanternFishState > 0 {
+				foo[lanternFishState-1] = count
+			}
+			foo[lanternFishState] = 0
+		}
+		foo[6] += bar
+		foo[8] = bar
+	}
+	for k, _ := range keys {
+		fmt.Println("Key:", k, "=>", "Element:", foo[k])
+	}
+	return foo
 }
 
 func main() {
-	lanternFishStartingStates := readLines("day_6/day_6_test.txt")
+	lanternFishStartingStates := readLines("day_6/day_6.txt")
 	results := simulateLanternfishGrowth(lanternFishStartingStates, 256)
-	println(len(results))
+	acc := 0
+	for _, v := range results {
+		acc += v
+	}
+	println(acc)
 }
