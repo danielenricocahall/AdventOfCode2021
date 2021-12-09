@@ -26,38 +26,43 @@ func readLines(path string) []int {
 	return lanternfishStartingStates
 }
 
+func initializeCounter(lanternFishStartingStates []int) (map[int]int, []int) {
+	stateCounter := make(map[int]int)
+	for i := 0; i <= 8; i++ {
+		stateCounter[i] = 0
+	}
+	for _, state := range lanternFishStartingStates {
+		stateCounter[state] += 1
+	}
+	lanternFishStates := make([]int, 0, len(stateCounter))
+	for k := range stateCounter {
+		lanternFishStates = append(lanternFishStates, k)
+	}
+	sort.Ints(lanternFishStates)
+
+	return stateCounter, lanternFishStates
+}
+
 func simulateLanternfishGrowth(
 	lanternFishStartingStates []int,
 	days int) map[int]int {
-	lanternFishStates := lanternFishStartingStates
-	foo := make(map[int]int)
-	for i := 0; i <= 8; i++ {
-		foo[i] = 0
-	}
-	for _, state := range lanternFishStates {
-		foo[state] += 1
-	}
-	keys := make([]int, 0, len(foo))
-	for k := range foo {
-		keys = append(keys, k)
-	}
-	sort.Ints(keys)
+	counter, lanternFishStates := initializeCounter(lanternFishStartingStates)
 	for day := 0; day < days; day++ {
-		bar := foo[0]
-		for _, lanternFishState := range keys {
-			count := foo[lanternFishState]
+		lanternFishAboutToSpawn := counter[0]
+		for _, lanternFishState := range lanternFishStates {
+			count := counter[lanternFishState]
 			if lanternFishState > 0 {
-				foo[lanternFishState-1] = count
+				counter[lanternFishState-1] = count
 			}
-			foo[lanternFishState] = 0
+			counter[lanternFishState] = 0
 		}
-		foo[6] += bar
-		foo[8] = bar
+		counter[6] += lanternFishAboutToSpawn
+		counter[8] = lanternFishAboutToSpawn
 	}
-	for k, _ := range keys {
-		fmt.Println("Key:", k, "=>", "Element:", foo[k])
+	for k, _ := range lanternFishStates {
+		fmt.Println("Lantern Fish State:", k, "=>", "Count:", counter[k])
 	}
-	return foo
+	return counter
 }
 
 func main() {
