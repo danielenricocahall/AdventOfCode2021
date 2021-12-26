@@ -1,6 +1,7 @@
 package main
 
 import (
+	"AdventOfCode/utils"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -14,13 +15,6 @@ func reverse(numbers []int) []int {
 		numbers[i], numbers[j] = numbers[j], numbers[i]
 	}
 	return numbers
-}
-func Map(vs []string, f func(string) (int, error)) []int {
-	vsm := make([]int, len(vs))
-	for i, v := range vs {
-		vsm[i], _ = f(v)
-	}
-	return vsm
 }
 
 func filter(ss []string, test func(string) bool) (ret []string) {
@@ -39,7 +33,7 @@ func constructBingoCard(lines []string, i int) BingoCard {
 		line = filter(line, func(s string) bool {
 			return len(s) > 0
 		})
-		bingoCard[j] = Map(line, strconv.Atoi)
+		bingoCard[j] = utils.Map(line, strconv.Atoi)
 	}
 	return bingoCard
 }
@@ -95,7 +89,7 @@ func readLines(path string) ([]BingoCard, []int) {
 	defer file.Close()
 	rawBytes, _ := ioutil.ReadAll(file)
 	lines := strings.Split(string(rawBytes), "\n")
-	var winningNumbers = Map(strings.Split(lines[0], ","), strconv.Atoi)
+	var winningNumbers = utils.Map(strings.Split(lines[0], ","), strconv.Atoi)
 	var bingoCards []BingoCard
 	for i := 1; i < len(lines); {
 		if len(lines[i]) == 0 {
