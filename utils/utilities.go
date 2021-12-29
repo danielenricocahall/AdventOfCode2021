@@ -1,5 +1,10 @@
 package utils
 
+type Coordinate struct {
+	X int
+	Y int
+}
+
 func Map(vs []string, f func(string) (int, error)) []int {
 	vsm := make([]int, len(vs))
 	for i, v := range vs {

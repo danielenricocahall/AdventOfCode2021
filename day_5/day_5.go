@@ -1,16 +1,12 @@
 package main
 
 import (
+	. "AdventOfCode/utils"
 	"bufio"
 	"os"
 	"strconv"
 	"strings"
 )
-
-type Coordinate struct {
-	x int
-	y int
-}
 
 func readLines(path string,
 	computeCoordinateFunction func(x1 int, x2 int,
@@ -46,7 +42,7 @@ func computeCoordinatesOnlyHorizontalAndVertical(
 			y1, y2 = y2, y1
 		}
 		for y := y1; y <= y2; y++ {
-			coordinate := Coordinate{x: x, y: y}
+			coordinate := Coordinate{X: x, Y: y}
 			coordinates = append(coordinates, coordinate)
 		}
 
@@ -56,7 +52,7 @@ func computeCoordinatesOnlyHorizontalAndVertical(
 			x1, x2 = x2, x1
 		}
 		for x := x1; x <= x2; x++ {
-			coordinate := Coordinate{x: x, y: y}
+			coordinate := Coordinate{X: x, Y: y}
 			coordinates = append(coordinates, coordinate)
 		}
 	}
@@ -72,7 +68,7 @@ func computeCoordinatesAll(
 	if x1 != x2 && y1 != y2 {
 
 		for x, y := x1, y1; x != x2 && y != y2; {
-			coordinate := Coordinate{x: x, y: y}
+			coordinate := Coordinate{X: x, Y: y}
 			coordinates = append(coordinates, coordinate)
 			if x1 > x2 {
 				x--
@@ -85,7 +81,7 @@ func computeCoordinatesAll(
 				y++
 			}
 		}
-		coordinates = append(coordinates, Coordinate{x: x2, y: y2})
+		coordinates = append(coordinates, Coordinate{X: x2, Y: y2})
 	} else {
 		coordinates = append(coordinates,
 			computeCoordinatesOnlyHorizontalAndVertical(x1, x2, y1, y2)...)
@@ -119,7 +115,7 @@ func main() {
 	coordinateOccurrences := countCoordinatesOccurrences(coordinates)
 	println(len(coordinateOccurrences))
 	for k, v := range coordinateOccurrences {
-		println("Key: (", k.x, k.y, ") =>", v)
+		println("Key: (", k.X, k.Y, ") =>", v)
 	}
 	filterCoordinateOccurrences(coordinateOccurrences,
 		func(coordinate Coordinate, occurrence int) bool {
