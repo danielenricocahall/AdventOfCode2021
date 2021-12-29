@@ -110,8 +110,8 @@ func foldUp(paper *[][]string, value int) {
 func foldLeft(paper *[][]string, value int) {
 	maxX := len((*paper)[0]) - 1
 	for row, _ := range *paper {
-		for col, _ := range (*paper)[row] {
-			if (*paper)[row][maxX-col] == "#" {
+		for col, _ := range (*paper)[row][:value] {
+			if (*paper)[row][col] != "#" {
 				(*paper)[row][col] = (*paper)[row][maxX-col]
 			}
 		}
@@ -124,13 +124,12 @@ func foldLeft(paper *[][]string, value int) {
 func foldPaper(paper *[][]string, folds []Fold, numFolds int) {
 	folds = folds[:numFolds]
 	for _, fold := range folds {
-		addFoldingLine(paper, fold)
 		if fold.axis == "y" {
 			foldUp(paper, fold.value)
-			printPaper(paper)
+			//printPaper(paper)
 		} else if fold.axis == "x" {
 			foldLeft(paper, fold.value)
-			printPaper(paper)
+			//printPaper(paper)
 		}
 	}
 }
@@ -158,12 +157,30 @@ func replaceNotVisibleDots(paper *[][]string) {
 }
 
 func main() {
+	/*
+
+		####..##..#..#.#..#.###..####..##..###.
+		#....#..#.#..#.#.#..#..#.#....#..#.#..#
+		###..#..#.####.##...#..#.###..#....#..#
+		#....####.#..#.#.#..###..#....#....###.
+		#....#..#.#..#.#.#..#.#..#....#..#.#...
+		####.#..#.#..#.#..#.#..#.####..##..#...
+
+
+		####.####.#..#.#.##.#.##.####..#.#.####.
+		###..####.####.###..##...####.##...####.
+		###..####.####.###..####.###..#..#.##.#.
+		###..####.####.###..####.###..#....####.
+		####.####.#..#.#.##.####.###..#.##.#....
+		####.#..#.#..#.#.##.#.##.###..####.#....
+
+
+	*/
 	coordinates, folds := readLines("day_13/data.txt")
 	paper := createPaper(&coordinates)
-	printPaper(&paper)
 	foldPaper(&paper, folds, len(folds))
-	println(countVisibleDots(&paper))
-	replaceNotVisibleDots(&paper)
+
+	//println(countVisibleDots(&paper))
 	printPaper(&paper)
 
 }
