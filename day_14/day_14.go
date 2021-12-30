@@ -98,5 +98,4 @@ func main() {
 	rules, polymerTemplate := readLines("day_14/test.txt")
 	counter := applyPolymerRules(polymerTemplate, rules, 40)
 	countOccurrences(counter, polymerTemplate)
-
 }
