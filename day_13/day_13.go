@@ -113,9 +113,6 @@ func foldUp(paper *[][]string, value int) {
 
 func foldLeft(paper *[][]string, value int) {
 	maxX := len((*paper)[0]) - 1
-	if maxX != 2*value {
-		println("MAX X IS " + strconv.Itoa(maxX) + " BUT 2 * " + strconv.Itoa(value) + " = " + strconv.Itoa(2*value))
-	}
 	for row, _ := range *paper {
 		for col, _ := range (*paper)[row][:value] {
 			if (*paper)[row][col] != "#" {
@@ -186,7 +183,8 @@ func main() {
 	coordinates, folds := readLines("day_13/data.txt")
 	paper := createPaper(&coordinates)
 	foldPaper(&paper, folds, len(folds))
-	//println(countVisibleDots(&paper))
+	println(countVisibleDots(&paper))
+	replaceNotVisibleDots(&paper)
 	printPaper(&paper)
 
 }
