@@ -1,39 +1,13 @@
 package main
 
 import (
+	. "AdventOfCode/utils"
 	"math"
 	"os"
 	"strconv"
 	"strings"
 )
 
-func Map(vs []string, f func(string) (int, error)) []int {
-	vsm := make([]int, len(vs))
-	for i, v := range vs {
-		vsm[i], _ = f(v)
-	}
-	return vsm
-}
-
-func computeMax(values []int) int {
-	max := values[0]
-	for value := range values {
-		if value > max {
-			max = value
-		}
-	}
-	return max
-}
-
-func computeMin(values []int) int {
-	min := values[0]
-	for value := range values {
-		if value < min {
-			min = value
-		}
-	}
-	return min
-}
 func readLines(path string) []int {
 	data, _ := os.ReadFile(path)
 	var positions []int
@@ -67,7 +41,7 @@ func computeSumOfTriangularSumDifferences(positions []int, k int) int {
 
 func computeMinimumFuel(positions []int,
 	differenceFunction func([]int, int) int) int {
-	maxPosition := computeMax(positions)
+	maxPosition := ComputeMax(positions)
 	minFuelUsed := math.Inf(1)
 	for k := 0; k <= maxPosition; k++ {
 		fuelUsed := differenceFunction(positions, k)
