@@ -97,6 +97,10 @@ func addFoldingLine(paper *[][]string, fold Fold) {
 
 func foldUp(paper *[][]string, value int) {
 	maxY := len(*paper) - 1
+	if maxY != 2*value {
+		// TODO figure out why this happens - it affects the 447 fold and ruins the output
+		value = maxY / 2
+	}
 	for row, _ := range (*paper)[:value] {
 		for col, _ := range (*paper)[row] {
 			if (*paper)[maxY-row][col] == "#" {
@@ -109,6 +113,9 @@ func foldUp(paper *[][]string, value int) {
 
 func foldLeft(paper *[][]string, value int) {
 	maxX := len((*paper)[0]) - 1
+	if maxX != 2*value {
+		println("MAX X IS " + strconv.Itoa(maxX) + " BUT 2 * " + strconv.Itoa(value) + " = " + strconv.Itoa(2*value))
+	}
 	for row, _ := range *paper {
 		for col, _ := range (*paper)[row][:value] {
 			if (*paper)[row][col] != "#" {
@@ -179,7 +186,6 @@ func main() {
 	coordinates, folds := readLines("day_13/data.txt")
 	paper := createPaper(&coordinates)
 	foldPaper(&paper, folds, len(folds))
-
 	//println(countVisibleDots(&paper))
 	printPaper(&paper)
 
