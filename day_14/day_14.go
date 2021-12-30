@@ -74,13 +74,15 @@ func applyPolymerRules(polymerTemplate string, rules map[string]string, steps in
 	return counter
 }
 
-func countOccurrences(pairCounter map[string]int) {
+func countOccurrences(pairCounter map[string]int, polymerTemplate string) {
 	characterCounter := make(map[string]int)
 	length := 0
 	for pair, count := range pairCounter {
 		characterCounter[string(pair[0])] += count
 		length += count
 	}
+	// the last character in the template has to be manually counted since it's not the first element in any pair
+	characterCounter[string(polymerTemplate[len(polymerTemplate)-1])] += 1
 	fmt.Println(characterCounter)
 	v := make([]int, 0, len(characterCounter))
 
@@ -88,13 +90,13 @@ func countOccurrences(pairCounter map[string]int) {
 		v = append(v, value)
 	}
 
-	println(ComputeMax(v) - ComputeMin(v) - 1)
+	println(ComputeMax(v) - ComputeMin(v))
 
 }
 
 func main() {
-	rules, polymerTemplate := readLines("day_14/data.txt")
+	rules, polymerTemplate := readLines("day_14/test.txt")
 	counter := applyPolymerRules(polymerTemplate, rules, 40)
-	countOccurrences(counter)
+	countOccurrences(counter, polymerTemplate)
 
 }
