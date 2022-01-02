@@ -54,3 +54,11 @@ func IsLowerCase(s string) bool {
 	}
 	return true
 }
+
+func CopyMap(originalMap map[string]int) map[string]int {
+	newMap := make(map[string]int)
+	for k, v := range originalMap {
+		newMap[k] = v
+	}
+	return newMap
+}

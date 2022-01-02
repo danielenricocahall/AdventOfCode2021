@@ -3,7 +3,6 @@ package main
 import (
 	. "AdventOfCode/utils"
 	"bufio"
-	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -57,45 +56,85 @@ func readLines(path string) *[]*Node {
 }
 
 func printGraph(graph *[]*Node) {
-	for _, node := range *graph {
-		println(node.name)
-		for _, edge := range node.edges {
-			fmt.Println(*edge)
+	for i, node := range *graph {
+		print(node.name)
+		if i < len(*graph)-1 {
+			print("->")
 		}
 	}
+	println()
 }
 
-func findAllPaths(graph *[]*Node) {
+func findAllPaths(graph *[]*Node, maxVisitCountForSmallCaves int) {
 	start := findNodeInGraph(graph, "start")
-	previous := []*Node{}
-	currentPath := []*Node{}
+	var currentPath []*Node
 	pathCount := 0
-	traverse(start, previous, currentPath, &pathCount)
+	counter := make(map[string]int)
+	traverse(start, currentPath, &pathCount, counter, maxVisitCountForSmallCaves)
 	println("Total Paths: " + strconv.Itoa(pathCount))
 }
 
-func traverse(node *Node, subGraph []*Node, currentPath []*Node, pathCount *int) {
-	if (*node).name == "end" {
-		for _, foo := range currentPath {
-			print(foo.name + "->")
+func smallCavesNotVisited(
+	smallCaveVisitedCounter map[string]int,
+	maxVisitCount int) bool {
+	for node, _ := range smallCaveVisitedCounter {
+		if !smallCaveNotVisited(smallCaveVisitedCounter, node, maxVisitCount) {
+			return false
 		}
-		print((*node).name)
-		println()
+	}
+	return true
+}
+
+func getSmallCaveNames(smallCaveVisitCounter map[string]int) []string {
+	var smallCaves []string
+	for cave, _ := range smallCaveVisitCounter {
+		smallCaves = append(smallCaves, cave)
+	}
+	return smallCaves
+}
+
+func isSmallCave(cave string, smallCaves []string) bool {
+	for _, smallCave := range smallCaves {
+		if cave == smallCave {
+			return true
+		}
+	}
+	return false
+}
+
+func smallCaveNotVisited(smallCaveVisitedCounter map[string]int,
+	smallCave string,
+	maxVisitCount int) bool {
+	return smallCaveVisitedCounter[smallCave] < maxVisitCount
+}
+
+func traverse(cave *Node,
+	currentPath []*Node,
+	pathCount *int,
+	smallCaveVisitedCounter map[string]int,
+	maxVisitCount int) {
+
+	currentPath = append(currentPath, cave)
+	if (*cave).name == "end" {
+		printGraph(&currentPath)
 		*pathCount += 1
 		return
 	}
-	if IsLowerCase((*node).name) || (*node).name == "start" {
-		subGraph = append(subGraph, node)
+	if IsLowerCase((*cave).name) {
+		smallCaveVisitedCounter[(*cave).name] += 1
 	}
-	currentPath = append(currentPath, node)
-	for _, neighbor := range (*node).edges {
-		if !nodeInGraph(&subGraph, (*neighbor).name) {
-			traverse(neighbor, subGraph, currentPath, pathCount)
+	smallCaves := getSmallCaveNames(smallCaveVisitedCounter)
+	for _, nextCave := range (*cave).edges {
+		if !isSmallCave((*nextCave).name, smallCaves) ||
+			(isSmallCave((*nextCave).name, smallCaves) &&
+				smallCavesNotVisited(smallCaveVisitedCounter, maxVisitCount) &&
+				(*nextCave).name != "start") {
+			traverse(nextCave, currentPath, pathCount, CopyMap(smallCaveVisitedCounter), maxVisitCount)
 		}
 	}
 }
 
 func main() {
 	graph := readLines("day_12/data.txt")
-	findAllPaths(graph)
+	findAllPaths(graph, 2)
 }
