@@ -1,5 +1,7 @@
 package utils
 
+import "unicode"
+
 type Coordinate struct {
 	X int
 	Y int
@@ -42,4 +44,13 @@ func ComputeMin(values []int) int {
 		}
 	}
 	return min
+}
+
+func IsLowerCase(s string) bool {
+	for _, c := range s {
+		if unicode.IsUpper(c) {
+			return false
+		}
+	}
+	return true
 }

@@ -95,7 +95,7 @@ func countOccurrences(pairCounter map[string]int, polymerTemplate string) {
 }
 
 func main() {
-	rules, polymerTemplate := readLines("day_14/test.txt")
+	rules, polymerTemplate := readLines("day_14/data.txt")
 	counter := applyPolymerRules(polymerTemplate, rules, 40)
 	countOccurrences(counter, polymerTemplate)
 }
