@@ -43,16 +43,15 @@ func computeNextStepWithLowestRisk(cavern *[][]int,
 		println("Creating entry for " + strconv.Itoa(verticalPosition))
 		(*memo)[verticalPosition] = make(map[int][]int)
 	}
+	println("(" + strconv.Itoa(verticalPosition) + "," + strconv.Itoa(horizontalPosition) + ")")
 	if verticalPosition == rows && horizontalPosition == cols {
 		(*memo)[verticalPosition][horizontalPosition] = append((*memo)[verticalPosition][horizontalPosition], []int{(*cavern)[verticalPosition][horizontalPosition] + currentSum}...)
 		*results = append(*results, currentSum+(*cavern)[verticalPosition][horizontalPosition]-(*cavern)[0][0])
 	} else if (*memo)[verticalPosition][horizontalPosition] != nil &&
-		(currentSum+(*cavern)[verticalPosition][horizontalPosition] > (*memo)[verticalPosition][horizontalPosition][0] ||
+		(currentSum+(*cavern)[verticalPosition][horizontalPosition] >= (*memo)[verticalPosition][horizontalPosition][0] ||
 			(len((*memo)[verticalPosition][horizontalPosition]) == 2 &&
-				currentSum+(*cavern)[verticalPosition][horizontalPosition] > (*memo)[verticalPosition][horizontalPosition][1])) {
+				currentSum+(*cavern)[verticalPosition][horizontalPosition] >= (*memo)[verticalPosition][horizontalPosition][1])) {
 		println("Hit cache for (" + strconv.Itoa(verticalPosition) + "," + strconv.Itoa(horizontalPosition) + ")")
-		println(currentSum + (*cavern)[verticalPosition][horizontalPosition])
-		//fmt.Println((*memo)[verticalPosition][horizontalPosition])
 		return (*memo)[verticalPosition][horizontalPosition]
 
 	} else {
@@ -78,5 +77,6 @@ func main() {
 	sort.Ints(results)
 	//fmt.Println(results)
 	println(len(results))
+	fmt.Println(results)
 	println(results[0])
 }
