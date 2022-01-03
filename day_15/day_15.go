@@ -40,7 +40,6 @@ func expandVertical(cavern *[][]int, n int) {
 			}
 			newRows = append(newRows, newRow)
 		}
-		println(len(newRows))
 	}
 	*cavern = append(*cavern, newRows...)
 }
@@ -72,7 +71,6 @@ func computeNextStepWithLowestRisk(cavern *[][]int,
 	results *[]int) int {
 	rows := len(*cavern) - 1
 	cols := len((*cavern)[0]) - 1
-	println("(" + strconv.Itoa(verticalPosition) + "," + strconv.Itoa(horizontalPosition) + ")")
 
 	if verticalPosition == rows && horizontalPosition == cols {
 		*results = append(*results, currentSum+(*cavern)[verticalPosition][horizontalPosition])
@@ -106,8 +104,8 @@ func computeNextStepWithLowestRisk(cavern *[][]int,
 }
 
 func main() {
-	cavern := readLines("day_15/test2.txt")
-	//expandCavern(&cavern, 5)
+	cavern := readLines("day_15/data.txt")
+	expandCavern(&cavern, 5)
 	//fmt.Println(cavern)
 	results := findPathWithLowestRisk(cavern)
 	sort.Ints(results)
