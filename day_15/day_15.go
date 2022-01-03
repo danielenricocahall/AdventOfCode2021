@@ -3,10 +3,12 @@ package main
 import (
 	. "AdventOfCode/utils"
 	"bufio"
+	"fmt"
 	"os"
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func readLines(path string) [][]int {
@@ -68,46 +70,42 @@ func computeNextStepWithLowestRisk(cavern *[][]int,
 	verticalPosition int,
 	currentSum int,
 	memo *[][]int,
-	results *[]int) int {
+	results *[]int) {
 	rows := len(*cavern) - 1
 	cols := len((*cavern)[0]) - 1
 
 	if verticalPosition == rows && horizontalPosition == cols {
 		*results = append(*results, currentSum+(*cavern)[verticalPosition][horizontalPosition])
-	} else if (*memo)[verticalPosition][horizontalPosition] != 0 && currentSum+(*cavern)[verticalPosition][horizontalPosition] >= (*memo)[verticalPosition][horizontalPosition] {
-		return (*memo)[verticalPosition][horizontalPosition]
 	} else {
 		(*memo)[verticalPosition][horizontalPosition] = (*cavern)[verticalPosition][horizontalPosition] + currentSum
-		if verticalPosition+1 <= rows {
-			(*memo)[verticalPosition+1][horizontalPosition] =
-				computeNextStepWithLowestRisk(cavern,
-					horizontalPosition, verticalPosition+1, currentSum+(*cavern)[verticalPosition][horizontalPosition], memo, results)
+		if verticalPosition+1 <= rows && ((*memo)[verticalPosition+1][horizontalPosition] == 0 || currentSum+(*cavern)[verticalPosition+1][horizontalPosition] < (*memo)[verticalPosition+1][horizontalPosition]) {
+			computeNextStepWithLowestRisk(cavern,
+				horizontalPosition, verticalPosition+1, (*memo)[verticalPosition][horizontalPosition], memo, results)
 		}
-		if horizontalPosition+1 <= cols {
-			(*memo)[verticalPosition][horizontalPosition+1] =
-				computeNextStepWithLowestRisk(cavern,
-					horizontalPosition+1, verticalPosition, currentSum+(*cavern)[verticalPosition][horizontalPosition], memo, results)
+		if horizontalPosition+1 <= cols && ((*memo)[verticalPosition][horizontalPosition+1] == 0 || currentSum+(*cavern)[verticalPosition][horizontalPosition+1] < (*memo)[verticalPosition][horizontalPosition+1]) {
+			computeNextStepWithLowestRisk(cavern,
+				horizontalPosition+1, verticalPosition, (*memo)[verticalPosition][horizontalPosition], memo, results)
 		}
-		if verticalPosition-1 >= 0 {
-			(*memo)[verticalPosition-1][horizontalPosition] =
-				computeNextStepWithLowestRisk(cavern,
-					horizontalPosition, verticalPosition-1, currentSum+(*cavern)[verticalPosition][horizontalPosition], memo, results)
+		if verticalPosition-1 >= 0 && ((*memo)[verticalPosition-1][horizontalPosition] == 0 || currentSum+(*cavern)[verticalPosition-1][horizontalPosition] < (*memo)[verticalPosition-1][horizontalPosition]) {
+			computeNextStepWithLowestRisk(cavern,
+				horizontalPosition, verticalPosition-1, (*memo)[verticalPosition][horizontalPosition], memo, results)
 		}
-		if horizontalPosition-1 >= 0 {
-			(*memo)[verticalPosition][horizontalPosition-1] =
-				computeNextStepWithLowestRisk(cavern,
-					horizontalPosition-1, verticalPosition, currentSum+(*cavern)[verticalPosition][horizontalPosition], memo, results)
+		if horizontalPosition-1 >= 0 && ((*memo)[verticalPosition][horizontalPosition-1] == 0 || currentSum+(*cavern)[verticalPosition][horizontalPosition-1] < (*memo)[verticalPosition][horizontalPosition-1]) {
+			computeNextStepWithLowestRisk(cavern,
+				horizontalPosition-1, verticalPosition, currentSum+(*cavern)[verticalPosition][horizontalPosition], memo, results)
 		}
 	}
-	return (*cavern)[verticalPosition][horizontalPosition] + currentSum
 
 }
 
 func main() {
-	cavern := readLines("day_15/data.txt")
-	expandCavern(&cavern, 5)
+	cavern := readLines("day_15/test.txt")
+	expandCavern(&cavern, 1)
 	//fmt.Println(cavern)
+	start := time.Now()
 	results := findPathWithLowestRisk(cavern)
+	duration := time.Since(start)
+	fmt.Println(duration)
 	sort.Ints(results)
 	//fmt.Println(results)
 	println(len(results))
