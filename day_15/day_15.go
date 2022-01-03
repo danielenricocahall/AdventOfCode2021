@@ -54,7 +54,10 @@ func expandCavern(cavern *[][]int, n int) {
 func findPathWithLowestRisk(cavern [][]int) []int {
 	var results []int
 	currentSum := 0
-	memo := make(map[int]map[int]int)
+	memo := make([][]int, len(cavern))
+	for i := 0; i < len(memo); i++ {
+		memo[i] = make([]int, len(memo))
+	}
 	computeNextStepWithLowestRisk(&cavern, 0, 0, currentSum, &memo, &results)
 	//bs, _ := json.Marshal(memo)
 	//fmt.Println(string(bs))
@@ -65,18 +68,15 @@ func computeNextStepWithLowestRisk(cavern *[][]int,
 	horizontalPosition int,
 	verticalPosition int,
 	currentSum int,
-	memo *map[int]map[int]int,
+	memo *[][]int,
 	results *[]int) int {
 	rows := len(*cavern) - 1
 	cols := len((*cavern)[0]) - 1
-	if (*memo)[verticalPosition] == nil {
-		println("Creating entry for " + strconv.Itoa(verticalPosition))
-		(*memo)[verticalPosition] = make(map[int]int)
-	}
+	println("(" + strconv.Itoa(verticalPosition) + "," + strconv.Itoa(horizontalPosition) + ")")
+
 	if verticalPosition == rows && horizontalPosition == cols {
 		*results = append(*results, currentSum+(*cavern)[verticalPosition][horizontalPosition])
 	} else if (*memo)[verticalPosition][horizontalPosition] != 0 && currentSum+(*cavern)[verticalPosition][horizontalPosition] >= (*memo)[verticalPosition][horizontalPosition] {
-		//println("Hit cache for (" + strconv.Itoa(verticalPosition) + "," + strconv.Itoa(horizontalPosition) + ")")
 		return (*memo)[verticalPosition][horizontalPosition]
 	} else {
 		(*memo)[verticalPosition][horizontalPosition] = (*cavern)[verticalPosition][horizontalPosition] + currentSum
@@ -106,8 +106,8 @@ func computeNextStepWithLowestRisk(cavern *[][]int,
 }
 
 func main() {
-	cavern := readLines("day_15/data.txt")
-	expandCavern(&cavern, 5)
+	cavern := readLines("day_15/test2.txt")
+	//expandCavern(&cavern, 5)
 	//fmt.Println(cavern)
 	results := findPathWithLowestRisk(cavern)
 	sort.Ints(results)
