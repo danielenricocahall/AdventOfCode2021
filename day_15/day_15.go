@@ -111,7 +111,7 @@ func computeNextStepWithLowestRisk(cavern *[][]int,
 
 func main() {
 	cavern := readLines("day_15/data.txt")
-	expandCavern(&cavern, 1)
+	expandCavern(&cavern, 5)
 	//fmt.Println(cavern)
 	start := time.Now()
 	results := findPathWithLowestRisk(cavern)
