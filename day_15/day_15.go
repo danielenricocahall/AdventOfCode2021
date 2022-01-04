@@ -93,25 +93,25 @@ func computeNextStepWithLowestRisk(cavern *[][]int,
 		(*memo)[verticalPosition][horizontalPosition] = currentSum
 		if verticalPosition+1 <= rows &&
 			(currentSum+(*cavern)[verticalPosition+1][horizontalPosition] < (*memo)[verticalPosition+1][horizontalPosition]) &&
-			*minTotalRisk > (currentSum+(*cavern)[verticalPosition+1][horizontalPosition]) {
+			(currentSum+(*cavern)[verticalPosition+1][horizontalPosition]) < *minTotalRisk {
 			computeNextStepWithLowestRisk(cavern,
 				horizontalPosition, verticalPosition+1, currentSum, memo, minTotalRisk)
 		}
 		if horizontalPosition+1 <= cols &&
 			(currentSum+(*cavern)[verticalPosition][horizontalPosition+1] < (*memo)[verticalPosition][horizontalPosition+1]) &&
-			*minTotalRisk > currentSum+(*cavern)[verticalPosition][horizontalPosition+1] {
+			currentSum+(*cavern)[verticalPosition][horizontalPosition+1] < *minTotalRisk {
 			computeNextStepWithLowestRisk(cavern,
 				horizontalPosition+1, verticalPosition, currentSum, memo, minTotalRisk)
 		}
 		if verticalPosition-1 >= 0 &&
 			(currentSum+(*cavern)[verticalPosition-1][horizontalPosition] < (*memo)[verticalPosition-1][horizontalPosition]) &&
-			*minTotalRisk > currentSum+(*cavern)[verticalPosition-1][horizontalPosition] {
+			currentSum+(*cavern)[verticalPosition-1][horizontalPosition] < *minTotalRisk {
 			computeNextStepWithLowestRisk(cavern,
 				horizontalPosition, verticalPosition-1, currentSum, memo, minTotalRisk)
 		}
 		if horizontalPosition-1 >= 0 &&
-			(currentSum+(*cavern)[verticalPosition][horizontalPosition-1] < (*memo)[verticalPosition][horizontalPosition-1] &&
-				*minTotalRisk > currentSum+(*cavern)[verticalPosition][horizontalPosition-1]) {
+			(currentSum+(*cavern)[verticalPosition][horizontalPosition-1] < (*memo)[verticalPosition][horizontalPosition-1]) &&
+			currentSum+(*cavern)[verticalPosition][horizontalPosition-1] < *minTotalRisk {
 			computeNextStepWithLowestRisk(cavern,
 				horizontalPosition-1, verticalPosition, currentSum, memo, minTotalRisk)
 		}
