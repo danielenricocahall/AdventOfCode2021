@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -65,14 +64,14 @@ func createMemoTable(cavern *[][]int) [][]int {
 
 }
 
-func findPathWithLowestRisk(cavern [][]int) []int {
-	var results []int
+func findPathWithLowestRisk(cavern [][]int) int {
+	minTotalRisk := math.MaxInt
 	currentSum := 0
 	memo := createMemoTable(&cavern)
-	computeNextStepWithLowestRisk(&cavern, 0, 0, currentSum, &memo, &results)
+	computeNextStepWithLowestRisk(&cavern, 0, 0, currentSum, &memo, &minTotalRisk)
 	//bs, _ := json.Marshal(memo)
 	//fmt.Println(string(bs))
-	return results
+	return minTotalRisk
 }
 
 func computeNextStepWithLowestRisk(cavern *[][]int,
@@ -80,30 +79,41 @@ func computeNextStepWithLowestRisk(cavern *[][]int,
 	verticalPosition int,
 	currentSum int,
 	memo *[][]int,
-	results *[]int) {
+	minTotalRisk *int) {
 	rows := len(*cavern) - 1
 	cols := len((*cavern)[0]) - 1
 
 	if verticalPosition == rows && horizontalPosition == cols {
-		*results = append(*results, currentSum+(*cavern)[verticalPosition][horizontalPosition])
+		totalRisk := currentSum + (*cavern)[verticalPosition][horizontalPosition]
+		if totalRisk < *minTotalRisk {
+			*minTotalRisk = totalRisk
+		}
 	} else {
 		currentSum += (*cavern)[verticalPosition][horizontalPosition]
 		(*memo)[verticalPosition][horizontalPosition] = currentSum
-		if verticalPosition+1 <= rows && (currentSum+(*cavern)[verticalPosition+1][horizontalPosition] < (*memo)[verticalPosition+1][horizontalPosition]) {
+		if verticalPosition+1 <= rows &&
+			(currentSum+(*cavern)[verticalPosition+1][horizontalPosition] < (*memo)[verticalPosition+1][horizontalPosition]) &&
+			*minTotalRisk > (currentSum+(*cavern)[verticalPosition+1][horizontalPosition]) {
 			computeNextStepWithLowestRisk(cavern,
-				horizontalPosition, verticalPosition+1, currentSum, memo, results)
+				horizontalPosition, verticalPosition+1, currentSum, memo, minTotalRisk)
 		}
-		if horizontalPosition+1 <= cols && (currentSum+(*cavern)[verticalPosition][horizontalPosition+1] < (*memo)[verticalPosition][horizontalPosition+1]) {
+		if horizontalPosition+1 <= cols &&
+			(currentSum+(*cavern)[verticalPosition][horizontalPosition+1] < (*memo)[verticalPosition][horizontalPosition+1]) &&
+			*minTotalRisk > currentSum+(*cavern)[verticalPosition][horizontalPosition+1] {
 			computeNextStepWithLowestRisk(cavern,
-				horizontalPosition+1, verticalPosition, currentSum, memo, results)
+				horizontalPosition+1, verticalPosition, currentSum, memo, minTotalRisk)
 		}
-		if verticalPosition-1 >= 0 && (currentSum+(*cavern)[verticalPosition-1][horizontalPosition] < (*memo)[verticalPosition-1][horizontalPosition]) {
+		if verticalPosition-1 >= 0 &&
+			(currentSum+(*cavern)[verticalPosition-1][horizontalPosition] < (*memo)[verticalPosition-1][horizontalPosition]) &&
+			*minTotalRisk > currentSum+(*cavern)[verticalPosition-1][horizontalPosition] {
 			computeNextStepWithLowestRisk(cavern,
-				horizontalPosition, verticalPosition-1, currentSum, memo, results)
+				horizontalPosition, verticalPosition-1, currentSum, memo, minTotalRisk)
 		}
-		if horizontalPosition-1 >= 0 && (currentSum+(*cavern)[verticalPosition][horizontalPosition-1] < (*memo)[verticalPosition][horizontalPosition-1]) {
+		if horizontalPosition-1 >= 0 &&
+			(currentSum+(*cavern)[verticalPosition][horizontalPosition-1] < (*memo)[verticalPosition][horizontalPosition-1] &&
+				*minTotalRisk > currentSum+(*cavern)[verticalPosition][horizontalPosition-1]) {
 			computeNextStepWithLowestRisk(cavern,
-				horizontalPosition-1, verticalPosition, currentSum, memo, results)
+				horizontalPosition-1, verticalPosition, currentSum, memo, minTotalRisk)
 		}
 	}
 
@@ -114,12 +124,10 @@ func main() {
 	expandCavern(&cavern, 5)
 	//fmt.Println(cavern)
 	start := time.Now()
-	results := findPathWithLowestRisk(cavern)
+	path := findPathWithLowestRisk(cavern)
 	duration := time.Since(start)
 	fmt.Println(duration)
-	sort.Ints(results)
 	//fmt.Println(results)
-	println(len(results))
 	//fmt.Println(results)
-	println(results[0] - cavern[0][0])
+	println(path - cavern[0][0])
 }
